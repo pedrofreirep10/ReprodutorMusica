@@ -82,6 +82,24 @@ public class PlaylistController {
     }
 
     /**
+     * Remove uma musica especifica da playlist.
+     *
+     * @param musica musica que sera removida.
+     */
+    public void removerMusica(Musica musica) {
+        if (musica == null) {
+            return;
+        }
+
+        Musica atual = reprodutor.getMusicaAtual();
+        if (musica.equals(atual)) {
+            reprodutor.stop();
+        }
+        playlist.removerMusica(musica);
+        notificarPlaylist();
+    }
+
+    /**
      * Obtem todas as musicas na ordem atual da playlist.
      *
      * @return lista de musicas.

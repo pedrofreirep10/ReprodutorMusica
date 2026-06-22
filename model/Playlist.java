@@ -84,6 +84,18 @@ public class Playlist {
     }
 
     /**
+     * Remove a musica selecionada pela interface.
+     *
+     * @param musica musica que sera removida.
+     */
+    public void removerMusica(Musica musica) {
+        NoMusica no = localizarNo(musica);
+        if (no != null) {
+            removerNo(no);
+        }
+    }
+
+    /**
      * Avanca a faixa atual para o proximo no.
      *
      * @return no da proxima musica ou null quando a playlist esta vazia.
@@ -254,7 +266,7 @@ public class Playlist {
 
         NoMusica cursor = cabeca;
         do {
-            if (cursor.getMusica().equals(musica)) {
+            if (cursor.getMusica() == musica || cursor.getMusica().equals(musica)) {
                 return cursor;
             }
             cursor = cursor.getProximo();

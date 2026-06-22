@@ -206,7 +206,7 @@ public class PlaylistView extends JPanel {
             return;
         }
 
-        controller.removerMusica(selecionada.getTitulo());
+        controller.removerMusica(selecionada);
     }
 
     /**

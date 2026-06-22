@@ -5,7 +5,10 @@ import java.io.IOException;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
+import javazoom.jl.decoder.Decoder;
 import javazoom.jl.decoder.JavaLayerException;
+import javazoom.jl.player.AudioDevice;
+import javazoom.jl.player.FactoryRegistry;
 import javazoom.jl.player.advanced.AdvancedPlayer;
 import javazoom.jl.player.advanced.PlaybackEvent;
 import javazoom.jl.player.advanced.PlaybackListener;
@@ -23,10 +26,11 @@ public class GerenciadorAudio {
     private final AtomicBoolean parado;
     private final AtomicBoolean tocando;
     private AdvancedPlayer player;
+    private DispositivoAudioComVolume dispositivoAudio;
     private Thread audioThread;
     private Runnable onMusicaTerminada;
     private Consumer<String> onErro;
-    private int volume;
+    private volatile int volume;
     private String caminhoAtual;
     private int frameAtual;
     private long versaoReproducao;
@@ -163,6 +167,7 @@ public class GerenciadorAudio {
                 // Fechar o player interrompe leituras bloqueantes feitas pelo JLayer.
                 player.close();
             }
+            dispositivoAudio = null;
         }
     }
 
@@ -172,7 +177,13 @@ public class GerenciadorAudio {
      * @param volume volume entre 0 e 100.
      */
     public void setVolume(int volume) {
-        this.volume = Math.max(0, Math.min(100, volume));
+        int volumeLimitado = Math.max(0, Math.min(100, volume));
+        this.volume = volumeLimitado;
+        synchronized (controleLock) {
+            if (dispositivoAudio != null) {
+                dispositivoAudio.setVolume(volumeLimitado);
+            }
+        }
     }
 
     /**
@@ -210,9 +221,11 @@ public class GerenciadorAudio {
     private void executarAudio(String caminho, int frameInicial, long versao) {
         boolean terminouNaturalmente = false;
         AdvancedPlayer playerLocal = null;
+        DispositivoAudioComVolume dispositivoLocal = null;
 
         try (FileInputStream arquivo = new FileInputStream(caminho)) {
-            playerLocal = new AdvancedPlayer(arquivo);
+            dispositivoLocal = new DispositivoAudioComVolume(volume);
+            playerLocal = new AdvancedPlayer(arquivo, dispositivoLocal);
             AdvancedPlayer playerDaThread = playerLocal;
             playerDaThread.setPlayBackListener(new PlaybackListener() {
                 /**
@@ -236,6 +249,7 @@ public class GerenciadorAudio {
                     return;
                 }
                 player = playerDaThread;
+                dispositivoAudio = dispositivoLocal;
             }
 
             // play(inicio, fim) deixa o JLayer decodificar continuamente, emitindo audio de forma estavel.
@@ -289,6 +303,7 @@ public class GerenciadorAudio {
         synchronized (controleLock) {
             if (player == playerLocal) {
                 player = null;
+                dispositivoAudio = null;
             }
 
             if (versao == versaoReproducao) {
@@ -311,6 +326,108 @@ public class GerenciadorAudio {
         Consumer<String> consumidor = onErro;
         if (Objects.nonNull(consumidor)) {
             consumidor.accept(mensagem);
+        }
+    }
+
+    /**
+     * dispositivo jlayer que aplica o volume antes de enviar o som ao java.
+     */
+    private static class DispositivoAudioComVolume implements AudioDevice {
+
+        private final AudioDevice delegado;
+        private volatile int volume;
+
+        /**
+         * cria o dispositivo de audio com o volume inicial.
+         *
+         * @param volume volume inicial entre 0 e 100.
+         * @throws JavaLayerException quando o dispositivo de audio nao abre.
+         */
+        DispositivoAudioComVolume(int volume) throws JavaLayerException {
+            this.delegado = FactoryRegistry.systemRegistry().createAudioDevice();
+            setVolume(volume);
+        }
+
+        /**
+         * define o volume usado na reproducao.
+         *
+         * @param volume volume entre 0 e 100.
+         */
+        void setVolume(int volume) {
+            this.volume = Math.max(0, Math.min(100, volume));
+        }
+
+        /**
+         * abre o dispositivo real usado pelo jlayer.
+         *
+         * @param decoder decodificador recebido do jlayer.
+         * @throws JavaLayerException quando o dispositivo nao pode ser aberto.
+         */
+        @Override
+        public void open(Decoder decoder) throws JavaLayerException {
+            delegado.open(decoder);
+        }
+
+        /**
+         * informa se o dispositivo esta aberto.
+         *
+         * @return true quando o dispositivo esta aberto.
+         */
+        @Override
+        public boolean isOpen() {
+            return delegado.isOpen();
+        }
+
+        /**
+         * escreve os samples ajustando o volume antes de tocar.
+         *
+         * @param samples samples de audio recebidos.
+         * @param offs indice inicial dos samples.
+         * @param len quantidade de samples usados.
+         * @throws JavaLayerException quando o audio nao pode ser escrito.
+         */
+        @Override
+        public void write(short[] samples, int offs, int len) throws JavaLayerException {
+            int volumeAtual = volume;
+            if (volumeAtual >= 100) {
+                delegado.write(samples, offs, len);
+                return;
+            }
+
+            short[] ajustados = new short[samples.length];
+            System.arraycopy(samples, 0, ajustados, 0, samples.length);
+            double fator = volumeAtual / 100.0;
+            int fim = Math.min(samples.length, offs + len);
+            for (int i = Math.max(0, offs); i < fim; i++) {
+                ajustados[i] = (short) Math.round(ajustados[i] * fator);
+            }
+            delegado.write(ajustados, offs, len);
+        }
+
+        /**
+         * fecha o dispositivo de audio.
+         */
+        @Override
+        public void close() {
+            delegado.close();
+        }
+
+        /**
+         * envia qualquer audio pendente para o dispositivo.
+         */
+        @Override
+        public void flush() {
+            delegado.flush();
+        }
+
+        /**
+         * retorna a posicao atual da reproducao.
+         *
+         * @return posicao atual informada pelo dispositivo real.
+         */
+        @Override
+        public int getPosition() {
+            return delegado.getPosition();
         }
     }
 }
