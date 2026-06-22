@@ -14,7 +14,9 @@ import javax.swing.UnsupportedLookAndFeelException;
 /**
  * Classe principal que cria a janela Swing do reprodutor de musicas.
  *
- * @author com.reprodutor
+ * @author Guilherme Pereira de Rivoredo
+ * @author João Batistella da Costa
+ * @author Pedro Henrique Freire Pereira
  * @version 1.0
  */
 public class MainApp {

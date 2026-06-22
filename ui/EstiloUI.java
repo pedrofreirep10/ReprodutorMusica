@@ -9,7 +9,9 @@ import javax.swing.border.Border;
 /**
  * Centraliza constantes visuais usadas pela interface Swing.
  *
- * @author com.reprodutor
+ * @author Guilherme Pereira de Rivoredo
+ * @author João Batistella da Costa
+ * @author Pedro Henrique Freire Pereira
  * @version 1.0
  */
 public final class EstiloUI {

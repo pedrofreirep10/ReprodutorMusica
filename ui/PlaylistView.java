@@ -26,7 +26,9 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 /**
  * Painel Swing responsavel por exibir e gerenciar a playlist.
  *
- * @author com.reprodutor
+ * @author Guilherme Pereira de Rivoredo
+ * @author João Batistella da Costa
+ * @author Pedro Henrique Freire Pereira
  * @version 1.0
  */
 public class PlaylistView extends JPanel {

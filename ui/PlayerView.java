@@ -21,7 +21,9 @@ import javax.swing.Timer;
 /**
  * Painel Swing com controles de reproducao e dados da faixa atual.
  *
- * @author com.reprodutor
+ * @author Guilherme Pereira de Rivoredo
+ * @author João Batistella da Costa
+ * @author Pedro Henrique Freire Pereira
  * @version 1.0
  */
 public class PlayerView extends JPanel implements Reprodutor.ReprodutorObserver {

@@ -7,7 +7,9 @@ import java.util.Random;
 /**
  * Playlist baseada em lista duplamente encadeada circular.
  *
- * @author com.reprodutor
+ * @author Guilherme Pereira de Rivoredo
+ * @author João Batistella da Costa
+ * @author Pedro Henrique Freire Pereira
  * @version 1.0
  */
 public class Playlist {

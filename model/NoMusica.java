@@ -3,7 +3,9 @@ package model;
 /**
  * No da lista duplamente encadeada circular de musicas.
  *
- * @author com.reprodutor
+ * @author Guilherme Pereira de Rivoredo
+ * @author João Batistella da Costa
+ * @author Pedro Henrique Freire Pereira
  * @version 1.0
  */
 public class NoMusica {

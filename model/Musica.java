@@ -5,7 +5,9 @@ import java.util.Objects;
 /**
  * Representa uma musica MP3 armazenada na playlist.
  *
- * @author com.reprodutor
+ * @author Guilherme Pereira de Rivoredo
+ * @author João Batistella da Costa
+ * @author Pedro Henrique Freire Pereira
  * @version 1.0
  */
 public class Musica {

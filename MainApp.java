@@ -1,7 +1,9 @@
 /**
  * Iniciador da aplicacao na raiz do projeto.
  *
- * @author com.reprodutor
+ * @author Guilherme Pereira de Rivoredo
+ * @author João Batistella da Costa
+ * @author Pedro Henrique Freire Pereira
  * @version 1.0
  */
 public class MainApp {

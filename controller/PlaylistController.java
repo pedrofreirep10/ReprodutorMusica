@@ -14,7 +14,9 @@ import java.util.function.Consumer;
 /**
  * Ponte unica entre a interface grafica e o modelo da playlist.
  *
- * @author com.reprodutor
+ * @author Guilherme Pereira de Rivoredo
+ * @author João Batistella da Costa
+ * @author Pedro Henrique Freire Pereira
  * @version 1.0
  */
 public class PlaylistController {

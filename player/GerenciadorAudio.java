@@ -16,7 +16,9 @@ import javazoom.jl.player.advanced.PlaybackListener;
 /**
  * Gerencia a reproducao de MP3 com JLayer em uma thread separada da EDT.
  *
- * @author com.reprodutor
+ * @author Guilherme Pereira de Rivoredo
+ * @author João Batistella da Costa
+ * @author Pedro Henrique Freire Pereira
  * @version 1.0
  */
 public class GerenciadorAudio {

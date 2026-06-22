@@ -9,7 +9,9 @@ import java.util.List;
 /**
  * Controla a playlist, o gerenciador de audio e notifica observers da UI.
  *
- * @author com.reprodutor
+ * @author Guilherme Pereira de Rivoredo
+ * @author João Batistella da Costa
+ * @author Pedro Henrique Freire Pereira
  * @version 1.0
  */
 public class Reprodutor {
@@ -17,7 +19,9 @@ public class Reprodutor {
     /**
      * Observer usado pela UI para receber mudancas do reprodutor sem JavaFX properties.
      *
-     * @author com.reprodutor
+     * @author Guilherme Pereira de Rivoredo
+     * @author João Batistella da Costa
+     * @author Pedro Henrique Freire Pereira
      * @version 1.0
      */
     public interface ReprodutorObserver {
